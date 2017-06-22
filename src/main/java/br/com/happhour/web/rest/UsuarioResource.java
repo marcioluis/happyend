@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.happhour.domain.Usuario;
+import br.com.happhour.service.UsuarioService;
 
 /**
  * REST controller for managing Usuario.
@@ -25,6 +26,12 @@ public class UsuarioResource {
 
 	private static final String ENTITY_NAME = "usuario";
 
+	private final UsuarioService usuarioService;
+
+	public UsuarioResource(UsuarioService usuarioService) {
+		this.usuarioService = usuarioService;
+	}
+
 	/**
 	 * POST /usuarios : Create a new usuario.
 	 *
@@ -36,8 +43,15 @@ public class UsuarioResource {
 	 * @throws URISyntaxException
 	 *             if the Location URI syntax is incorrect
 	 */
-	@PostMapping("/usuarios")
+	@PostMapping("/usuario")
 	public ResponseEntity<Usuario> createUsuario(@Valid @RequestBody Usuario usuario) throws URISyntaxException {
+
+		switch (usuario.getProvider()) {
+		case "google":
+			break;
+		case "facebook":
+			break;
+		}
 
 		return null;// ResponseEntity.created(new
 					// URI("/api/usuarios/1")).headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME,

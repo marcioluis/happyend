@@ -17,6 +17,7 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.NaturalId;
 import org.hibernate.validator.constraints.Email;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -62,6 +63,7 @@ public class Usuario implements Serializable {
 	private String provider;
 
 	@NotNull
+	@NaturalId(mutable = true)
 	@Column(name = "telephone", nullable = false)
 	private String telephone;
 
@@ -91,6 +93,102 @@ public class Usuario implements Serializable {
 	@JsonIgnore
 	@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 	private Set<Ponto> pontos = new HashSet<>();
+
+	public Long getId() {
+		return id;
+	}
+
+	public String getProviderIdToken() {
+		return providerIdToken;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public String getDisplayName() {
+		return displayName;
+	}
+
+	public String getFamilyName() {
+		return familyName;
+	}
+
+	public String getGivenName() {
+		return givenName;
+	}
+
+	public String getProvider() {
+		return provider;
+	}
+
+	public String getTelephone() {
+		return telephone;
+	}
+
+	public String getAuthCode() {
+		return authCode;
+	}
+
+	public String getProviderUserId() {
+		return providerUserId;
+	}
+
+	public String getImageUrl() {
+		return imageUrl;
+	}
+
+	public String getGender() {
+		return gender;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public void setProviderIdToken(String providerIdToken) {
+		this.providerIdToken = providerIdToken;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public void setDisplayName(String displayName) {
+		this.displayName = displayName;
+	}
+
+	public void setFamilyName(String familyName) {
+		this.familyName = familyName;
+	}
+
+	public void setGivenName(String givenName) {
+		this.givenName = givenName;
+	}
+
+	public void setProvider(String provider) {
+		this.provider = provider;
+	}
+
+	public void setTelephone(String telephone) {
+		this.telephone = telephone;
+	}
+
+	public void setAuthCode(String authCode) {
+		this.authCode = authCode;
+	}
+
+	public void setProviderUserId(String providerUserId) {
+		this.providerUserId = providerUserId;
+	}
+
+	public void setImageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
+	}
+
+	public void setGender(String gender) {
+		this.gender = gender;
+	}
 
 	public Set<UsuarioEmpresa> getEmpresas() {
 		return empresas;
