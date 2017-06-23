@@ -18,6 +18,13 @@ public final class HeaderUtil {
     private HeaderUtil() {
     }
 
+	/**
+	 * Create a custom header
+	 * 
+	 * @param message
+	 * @param param
+	 * @return header with the keys: X-happyend-alert and X-happyend-params
+	 */
     public static HttpHeaders createAlert(String message, String param) {
         HttpHeaders headers = new HttpHeaders();
 		headers.add("X-happyend-alert", message);
@@ -25,18 +32,54 @@ public final class HeaderUtil {
         return headers;
     }
 
+	/**
+	 * Creates an alert with the message format:
+	 * {@code application.entityName.created}
+	 * 
+	 * @param entityName
+	 * @param param
+	 * @return header with the keys: X-happyend-alert and X-happyend-params
+	 */
     public static HttpHeaders createEntityCreationAlert(String entityName, String param) {
         return createAlert(APPLICATION_NAME + "." + entityName + ".created", param);
     }
 
+	/**
+	 * Creates an alert with the message format:
+	 * {@code application.entityName.updated}
+	 * 
+	 * @param entityName
+	 * @param param
+	 * @return header with the keys: X-happyend-alert and X-happyend-params
+	 */
     public static HttpHeaders createEntityUpdateAlert(String entityName, String param) {
         return createAlert(APPLICATION_NAME + "." + entityName + ".updated", param);
     }
 
+	/**
+	 * Creates an alert with the message format:
+	 * {@code application.entityName.deleted}
+	 * 
+	 * @param entityName
+	 * @param param
+	 * @return header with the keys: X-happyend-alert and X-happyend-params
+	 */
     public static HttpHeaders createEntityDeletionAlert(String entityName, String param) {
         return createAlert(APPLICATION_NAME + "." + entityName + ".deleted", param);
     }
 
+	/**
+	 *
+	 * Create a custom error header
+	 * 
+	 * @param entityName
+	 *            entity name to X-happyend-param
+	 * @param errorKey
+	 *            error key for the header X-happyend-error: error.errorKey
+	 * @param defaultMessage
+	 *            message to the logger
+	 * @return header with the keys: X-happyend-error and X-happyend-params
+	 */
     public static HttpHeaders createFailureAlert(String entityName, String errorKey, String defaultMessage) {
         log.error("Entity creation failed, {}", defaultMessage);
         HttpHeaders headers = new HttpHeaders();
