@@ -1,5 +1,6 @@
 package br.com.happhour.web.rest;
 
+import java.net.URI;
 import java.net.URISyntaxException;
 
 import javax.validation.Valid;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.happhour.domain.Usuario;
 import br.com.happhour.service.UsuarioService;
+import br.com.happhour.web.rest.util.HeaderUtil;
 
 /**
  * REST controller for managing Usuario.
@@ -46,15 +48,17 @@ public class UsuarioResource {
 	@PostMapping("/usuario")
 	public ResponseEntity<Usuario> createUsuario(@Valid @RequestBody Usuario usuario) throws URISyntaxException {
 
-		switch (usuario.getProvider()) {
-		case "google":
-			break;
-		case "facebook":
-			break;
+		if (usuario.getId() != null) {
+			return ResponseEntity.badRequest().headers(
+					HeaderUtil.createFailureAlert(ENTITY_NAME, "idexists", "A new user cannot already have an ID"))
+					.body(null);
+
 		}
 
-		return null;// ResponseEntity.created(new
-					// URI("/api/usuarios/1")).headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME,
-					// "id")).body(result);
+		Usuario newUsuario = this.usuarioService.createUsuario(usuario);
+
+		return ResponseEntity.created(new URI("/api/usuarios/" + newUsuario.getId()))
+				.headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, newUsuario.getId().toString()))
+				.body(newUsuario);
 	}
 }

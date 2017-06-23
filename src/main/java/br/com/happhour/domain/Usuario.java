@@ -5,19 +5,20 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.NaturalId;
 import org.hibernate.validator.constraints.Email;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -37,8 +38,11 @@ public class Usuario implements Serializable {
 	@SequenceGenerator(name = "sequenceGenerator")
 	private Long id;
 
-	@NotNull
-	@Column(name = "provider_id_token", nullable = false)
+	/**
+	 * Token returned from the provider, problably expired in future uses after
+	 * first login. Necessary to get the user id, 'subject', from google
+	 */
+	@Column(name = "provider_id_token")
 	private String providerIdToken;
 
 	@Email
@@ -58,18 +62,27 @@ public class Usuario implements Serializable {
 	@Column(name = "given_name", nullable = false)
 	private String givenName;
 
+	/**
+	 * Login provider
+	 */
 	@NotNull
 	@Column(name = "provider", nullable = false)
 	private String provider;
 
 	@NotNull
-	@NaturalId(mutable = true)
 	@Column(name = "telephone", nullable = false)
 	private String telephone;
 
+	/**
+	 * Google Auth code that can be exchanged for an access token and refresh
+	 * token for offline access
+	 */
 	@Column(name = "auth_code")
 	private String authCode;
 
+	/**
+	 * Id from the provider, google or facebook
+	 */
 	@Column(name = "provider_user_id")
 	private String providerUserId;
 
@@ -78,6 +91,11 @@ public class Usuario implements Serializable {
 
 	@Column(name = "gender")
 	private String gender;
+
+	@OneToOne(cascade = CascadeType.ALL)
+	@JsonIgnore
+	@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+	private UserSettings settings;
 
 	@OneToMany(mappedBy = "usuario")
 	@JsonIgnore
@@ -96,6 +114,15 @@ public class Usuario implements Serializable {
 
 	public Long getId() {
 		return id;
+	}
+
+	public UserSettings getSettings() {
+		return settings;
+	}
+
+	public void setSettings(UserSettings settings) {
+		this.settings = settings;
+		settings.setUsuario(this);
 	}
 
 	public String getProviderIdToken() {

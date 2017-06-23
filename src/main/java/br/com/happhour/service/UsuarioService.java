@@ -1,6 +1,8 @@
 package br.com.happhour.service;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 import java.security.GeneralSecurityException;
 import java.util.Collections;
 
@@ -30,11 +32,34 @@ public class UsuarioService {
 		this.usuarioRepository = usuarioRepository;
 	}
 
-	public void validateGoogleToken(Usuario user) throws Exception {
+	public Usuario createUsuario(Usuario user) {
+		switch (user.getProvider()) {
+		case "google":
+			validateAndMergeGoogleTokenInfo(user);
+			return usuarioRepository.save(user);
+		case "facebook":
+		default:
+			return usuarioRepository.save(user);
+		}
+	}
 
+	/**
+	 * Valida o token Id do google e atualiza algumas informações do usuario com
+	 * os dados do token
+	 * 
+	 * @param user
+	 *            usuário com um provider id token do Google
+	 */
+	public void validateAndMergeGoogleTokenInfo(Usuario user) {
+
+		// TODO: Google Web Client num arquivo de properties
 		final String CLIENT_ID = "784220670042-ib1ssv1utfr1c4cvfs67t7n9tgkck2vk.apps.googleusercontent.com";
 
-		GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(new NetHttpTransport(),
+		// proxy para funcionar
+		NetHttpTransport netHttpTransport = new NetHttpTransport.Builder()
+				.setProxy(new Proxy(Proxy.Type.HTTP, new InetSocketAddress("localhost", 3128))).build();
+
+		GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(netHttpTransport,
 				JacksonFactory.getDefaultInstance())
 				.setAudience(Collections.singletonList(CLIENT_ID)).build();
 
@@ -46,25 +71,32 @@ public class UsuarioService {
 
 				// User identifier
 				String userId = payload.getSubject();
-				System.out.println(userId);
+
 				// Get profile information from payload
-				String email = payload.getEmail();
-				boolean emailVerified = Boolean.valueOf(payload.getEmailVerified());
+				// https://accounts.google.com/.well-known/openid-configuration
 				String name = (String) payload.get("name");
-				String pictureUrl = (String) payload.get("picture");
-				String locale = (String) payload.get("locale");
 				String familyName = (String) payload.get("family_name");
 				String givenName = (String) payload.get("given_name");
+				String pictureUrl = (String) payload.get("picture");
+				String email = payload.getEmail();
+				// boolean emailVerified =
+				// Boolean.valueOf(payload.getEmailVerified());
 
-				// Use or store profile information
-				// ...
+				user.setDisplayName(name);
+				user.setFamilyName(familyName);
+				user.setGivenName(givenName);
+				user.setImageUrl(pictureUrl);
+				user.setEmail(email);
+				user.setProviderUserId(userId);
 
 			} else {
-				System.out.println("Invalid ID token.");
+				// TODO: Google Token Excessao customizada se não validar o
+				// token
+				log.error("Google token inválido enviado. Usuário email: {}", user.getEmail());
 			}
 		} catch (GeneralSecurityException | IOException e) {
 			e.printStackTrace();
-			throw e;
+			// TODO: Google Token Excessao customizada se não validar o token
 		}
 	}
 }
