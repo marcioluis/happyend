@@ -1,27 +1,16 @@
 package br.com.happhour.domain;
 
-import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.validator.constraints.Email;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import javax.persistence.*;
+import javax.validation.constraints.*;
+import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.Objects;
 
 /**
  * A Usuario.
@@ -31,292 +20,362 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Usuario implements Serializable {
 
-	private static final long serialVersionUID = -5533625347903297768L;
+    private static final long serialVersionUID = 1L;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequenceGenerator")
-	@SequenceGenerator(name = "sequenceGenerator")
-	private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-	/**
-	 * Token returned from the provider, problably expired in future uses after
-	 * first login. Necessary to get the user id, 'subject', from google
-	 */
-	@Column(name = "provider_id_token")
-	private String providerIdToken;
+    /**
+     * Token returned from the provider, problably expired in future uses after
+     * first login. Necessary to get the user id, 'subject', from google
+     */
+    @ApiModelProperty(value = "Token returned from the provider, problably expired in future uses after first login. Necessary to get the user id, 'subject', from google")
+    @Column(name = "provider_id_token")
+    private String providerIdToken;
 
-	@Email
-	@NotNull
-	@Column(name = "email", nullable = false)
-	private String email;
+    @NotNull
+    @Column(name = "email", nullable = false)
+    private String email;
 
-	@NotNull
-	@Column(name = "display_name", nullable = false)
-	private String displayName;
+    @NotNull
+    @Column(name = "display_name", nullable = false)
+    private String displayName;
 
-	@NotNull
-	@Column(name = "family_name", nullable = false)
-	private String familyName;
+    @NotNull
+    @Column(name = "family_name", nullable = false)
+    private String familyName;
 
-	@NotNull
-	@Column(name = "given_name", nullable = false)
-	private String givenName;
+    @NotNull
+    @Column(name = "given_name", nullable = false)
+    private String givenName;
 
-	/**
-	 * Login provider
-	 */
-	@NotNull
-	@Column(name = "provider", nullable = false)
-	private String provider;
+    /**
+     * Login provider
+     */
+    @NotNull
+    @ApiModelProperty(value = "Login provider", required = true)
+    @Column(name = "provider", nullable = false)
+    private String provider;
 
-	@NotNull
-	@Column(name = "telephone", nullable = false)
-	private String telephone;
+    /**
+     * Google Auth code that can be exchanged for an access token and refresh
+     * token for offline access
+     */
+    @ApiModelProperty(value = "Google Auth code that can be exchanged for an access token and refresh token for offline access")
+    @Column(name = "auth_code")
+    private String authCode;
 
-	/**
-	 * Google Auth code that can be exchanged for an access token and refresh
-	 * token for offline access
-	 */
-	@Column(name = "auth_code")
-	private String authCode;
+    /**
+     * Id from the provider, google or facebook
+     */
+    @ApiModelProperty(value = "Id from the provider, google or facebook")
+    @Column(name = "provider_user_id")
+    private String providerUserId;
 
-	/**
-	 * Id from the provider, google or facebook
-	 */
-	@Column(name = "provider_user_id")
-	private String providerUserId;
+    @Column(name = "image_url")
+    private String imageUrl;
 
-	@Column(name = "image_url")
-	private String imageUrl;
+    @Column(name = "gender")
+    private String gender;
 
-	@Column(name = "gender")
-	private String gender;
+    @NotNull
+    @Column(name = "telephone", nullable = false)
+    private String telephone;
 
-	@OneToOne(cascade = CascadeType.ALL)
-	@JsonIgnore
-	@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-	private UserSettings settings;
+    @OneToOne
+    @JoinColumn(unique = true)
+    private UsuarioSettings settings;
 
-	@OneToMany(mappedBy = "usuario")
-	@JsonIgnore
-	@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-	private Set<UsuarioEmpresa> empresas = new HashSet<>();
+    @OneToMany(mappedBy = "usuario")
+    @JsonIgnore
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    private Set<UsuarioEmpresa> empresas = new HashSet<>();
 
-	@OneToMany(mappedBy = "usuario")
-	@JsonIgnore
-	@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-	private Set<UsuarioEvento> eventos = new HashSet<>();
+    @OneToMany(mappedBy = "usuario")
+    @JsonIgnore
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    private Set<UsuarioEvento> eventos = new HashSet<>();
 
-	@OneToMany(mappedBy = "usuario")
-	@JsonIgnore
-	@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-	private Set<Ponto> pontos = new HashSet<>();
+    @OneToMany(mappedBy = "usuario")
+    @JsonIgnore
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    private Set<Ponto> pontos = new HashSet<>();
 
-	public Long getId() {
-		return id;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public UserSettings getSettings() {
-		return settings;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public void setSettings(UserSettings settings) {
-		this.settings = settings;
-		settings.setUsuario(this);
-	}
+    public String getProviderIdToken() {
+        return providerIdToken;
+    }
 
-	public String getProviderIdToken() {
-		return providerIdToken;
-	}
+    public Usuario providerIdToken(String providerIdToken) {
+        this.providerIdToken = providerIdToken;
+        return this;
+    }
 
-	public String getEmail() {
-		return email;
-	}
+    public void setProviderIdToken(String providerIdToken) {
+        this.providerIdToken = providerIdToken;
+    }
 
-	public String getDisplayName() {
-		return displayName;
-	}
+    public String getEmail() {
+        return email;
+    }
 
-	public String getFamilyName() {
-		return familyName;
-	}
+    public Usuario email(String email) {
+        this.email = email;
+        return this;
+    }
 
-	public String getGivenName() {
-		return givenName;
-	}
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-	public String getProvider() {
-		return provider;
-	}
+    public String getDisplayName() {
+        return displayName;
+    }
 
-	public String getTelephone() {
-		return telephone;
-	}
+    public Usuario displayName(String displayName) {
+        this.displayName = displayName;
+        return this;
+    }
 
-	public String getAuthCode() {
-		return authCode;
-	}
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
 
-	public String getProviderUserId() {
-		return providerUserId;
-	}
+    public String getFamilyName() {
+        return familyName;
+    }
 
-	public String getImageUrl() {
-		return imageUrl;
-	}
+    public Usuario familyName(String familyName) {
+        this.familyName = familyName;
+        return this;
+    }
 
-	public String getGender() {
-		return gender;
-	}
+    public void setFamilyName(String familyName) {
+        this.familyName = familyName;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public String getGivenName() {
+        return givenName;
+    }
 
-	public void setProviderIdToken(String providerIdToken) {
-		this.providerIdToken = providerIdToken;
-	}
+    public Usuario givenName(String givenName) {
+        this.givenName = givenName;
+        return this;
+    }
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
+    public void setGivenName(String givenName) {
+        this.givenName = givenName;
+    }
 
-	public void setDisplayName(String displayName) {
-		this.displayName = displayName;
-	}
+    public String getProvider() {
+        return provider;
+    }
 
-	public void setFamilyName(String familyName) {
-		this.familyName = familyName;
-	}
+    public Usuario provider(String provider) {
+        this.provider = provider;
+        return this;
+    }
 
-	public void setGivenName(String givenName) {
-		this.givenName = givenName;
-	}
+    public void setProvider(String provider) {
+        this.provider = provider;
+    }
 
-	public void setProvider(String provider) {
-		this.provider = provider;
-	}
+    public String getAuthCode() {
+        return authCode;
+    }
 
-	public void setTelephone(String telephone) {
-		this.telephone = telephone;
-	}
+    public Usuario authCode(String authCode) {
+        this.authCode = authCode;
+        return this;
+    }
 
-	public void setAuthCode(String authCode) {
-		this.authCode = authCode;
-	}
+    public void setAuthCode(String authCode) {
+        this.authCode = authCode;
+    }
 
-	public void setProviderUserId(String providerUserId) {
-		this.providerUserId = providerUserId;
-	}
+    public String getProviderUserId() {
+        return providerUserId;
+    }
 
-	public void setImageUrl(String imageUrl) {
-		this.imageUrl = imageUrl;
-	}
+    public Usuario providerUserId(String providerUserId) {
+        this.providerUserId = providerUserId;
+        return this;
+    }
 
-	public void setGender(String gender) {
-		this.gender = gender;
-	}
+    public void setProviderUserId(String providerUserId) {
+        this.providerUserId = providerUserId;
+    }
 
-	public Set<UsuarioEmpresa> getEmpresas() {
-		return empresas;
-	}
+    public String getImageUrl() {
+        return imageUrl;
+    }
 
-	public Usuario empresas(Set<UsuarioEmpresa> usuarioEmpresas) {
-		this.empresas = usuarioEmpresas;
-		return this;
-	}
+    public Usuario imageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+        return this;
+    }
 
-	public Usuario addEmpresas(UsuarioEmpresa usuarioEmpresa) {
-		this.empresas.add(usuarioEmpresa);
-		usuarioEmpresa.setUsuario(this);
-		return this;
-	}
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
 
-	public Usuario removeEmpresas(UsuarioEmpresa usuarioEmpresa) {
-		this.empresas.remove(usuarioEmpresa);
-		usuarioEmpresa.setUsuario(null);
-		return this;
-	}
+    public String getGender() {
+        return gender;
+    }
 
-	public void setEmpresas(Set<UsuarioEmpresa> usuarioEmpresas) {
-		this.empresas = usuarioEmpresas;
-	}
+    public Usuario gender(String gender) {
+        this.gender = gender;
+        return this;
+    }
 
-	public Set<UsuarioEvento> getEventos() {
-		return eventos;
-	}
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
 
-	public Usuario eventos(Set<UsuarioEvento> usuarioEventos) {
-		this.eventos = usuarioEventos;
-		return this;
-	}
+    public String getTelephone() {
+        return telephone;
+    }
 
-	public Usuario addEventos(UsuarioEvento usuarioEvento) {
-		this.eventos.add(usuarioEvento);
-		usuarioEvento.setUsuario(this);
-		return this;
-	}
+    public Usuario telephone(String telephone) {
+        this.telephone = telephone;
+        return this;
+    }
 
-	public Usuario removeEventos(UsuarioEvento usuarioEvento) {
-		this.eventos.remove(usuarioEvento);
-		usuarioEvento.setUsuario(null);
-		return this;
-	}
+    public void setTelephone(String telephone) {
+        this.telephone = telephone;
+    }
 
-	public void setEventos(Set<UsuarioEvento> usuarioEventos) {
-		this.eventos = usuarioEventos;
-	}
+    public UsuarioSettings getSettings() {
+        return settings;
+    }
 
-	public Set<Ponto> getPontos() {
-		return pontos;
-	}
+    public Usuario settings(UsuarioSettings usuarioSettings) {
+        this.settings = usuarioSettings;
+        return this;
+    }
 
-	public Usuario pontos(Set<Ponto> pontos) {
-		this.pontos = pontos;
-		return this;
-	}
+    public void setSettings(UsuarioSettings usuarioSettings) {
+        this.settings = usuarioSettings;
+    }
 
-	public Usuario addPontos(Ponto ponto) {
-		this.pontos.add(ponto);
-		ponto.setUsuario(this);
-		return this;
-	}
+    public Set<UsuarioEmpresa> getEmpresas() {
+        return empresas;
+    }
 
-	public Usuario removePontos(Ponto ponto) {
-		this.pontos.remove(ponto);
-		ponto.setUsuario(null);
-		return this;
-	}
+    public Usuario empresas(Set<UsuarioEmpresa> usuarioEmpresas) {
+        this.empresas = usuarioEmpresas;
+        return this;
+    }
 
-	public void setPontos(Set<Ponto> pontos) {
-		this.pontos = pontos;
-	}
+    public Usuario addEmpresas(UsuarioEmpresa usuarioEmpresa) {
+        this.empresas.add(usuarioEmpresa);
+        usuarioEmpresa.setUsuario(this);
+        return this;
+    }
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) {
-			return true;
-		}
-		if (o == null || getClass() != o.getClass()) {
-			return false;
-		}
-		Usuario usuario = (Usuario) o;
-		if (usuario.id == null || id == null) {
-			return false;
-		}
-		return Objects.equals(id, usuario.id);
-	}
+    public Usuario removeEmpresas(UsuarioEmpresa usuarioEmpresa) {
+        this.empresas.remove(usuarioEmpresa);
+        usuarioEmpresa.setUsuario(null);
+        return this;
+    }
 
-	@Override
-	public int hashCode() {
-		return Objects.hashCode(id);
-	}
+    public void setEmpresas(Set<UsuarioEmpresa> usuarioEmpresas) {
+        this.empresas = usuarioEmpresas;
+    }
 
-	@Override
-	public String toString() {
-		return "Usuario{" + "id=" + id + ", email='" + email + "'" + ", idToken='" + providerIdToken + "'"
-				+ ", displayName='" + displayName + "'" + ", familyName='" + familyName + "'" + ", givenName='"
-				+ givenName + "'" + ", provider='" + provider + "'" + ", providerUserId='" + providerUserId + "'"
-				+ ", imageUrl='" + imageUrl + "'" + ", gender='" + gender + "'" + '}';
-	}
+    public Set<UsuarioEvento> getEventos() {
+        return eventos;
+    }
+
+    public Usuario eventos(Set<UsuarioEvento> usuarioEventos) {
+        this.eventos = usuarioEventos;
+        return this;
+    }
+
+    public Usuario addEventos(UsuarioEvento usuarioEvento) {
+        this.eventos.add(usuarioEvento);
+        usuarioEvento.setUsuario(this);
+        return this;
+    }
+
+    public Usuario removeEventos(UsuarioEvento usuarioEvento) {
+        this.eventos.remove(usuarioEvento);
+        usuarioEvento.setUsuario(null);
+        return this;
+    }
+
+    public void setEventos(Set<UsuarioEvento> usuarioEventos) {
+        this.eventos = usuarioEventos;
+    }
+
+    public Set<Ponto> getPontos() {
+        return pontos;
+    }
+
+    public Usuario pontos(Set<Ponto> pontos) {
+        this.pontos = pontos;
+        return this;
+    }
+
+    public Usuario addPontos(Ponto ponto) {
+        this.pontos.add(ponto);
+        ponto.setUsuario(this);
+        return this;
+    }
+
+    public Usuario removePontos(Ponto ponto) {
+        this.pontos.remove(ponto);
+        ponto.setUsuario(null);
+        return this;
+    }
+
+    public void setPontos(Set<Ponto> pontos) {
+        this.pontos = pontos;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Usuario usuario = (Usuario) o;
+        if (usuario.getId() == null || getId() == null) {
+            return false;
+        }
+        return Objects.equals(getId(), usuario.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getId());
+    }
+
+    @Override
+    public String toString() {
+        return "Usuario{" +
+            "id=" + getId() +
+            ", providerIdToken='" + getProviderIdToken() + "'" +
+            ", email='" + getEmail() + "'" +
+            ", displayName='" + getDisplayName() + "'" +
+            ", familyName='" + getFamilyName() + "'" +
+            ", givenName='" + getGivenName() + "'" +
+            ", provider='" + getProvider() + "'" +
+            ", authCode='" + getAuthCode() + "'" +
+            ", providerUserId='" + getProviderUserId() + "'" +
+            ", imageUrl='" + getImageUrl() + "'" +
+            ", gender='" + getGender() + "'" +
+            ", telephone='" + getTelephone() + "'" +
+            "}";
+    }
 }

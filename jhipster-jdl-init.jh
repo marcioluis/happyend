@@ -1,0 +1,112 @@
+entity Empresa {
+  cnpj String required,
+  nome String required,
+  nomeExibicao String,
+  ativa Boolean required,
+  happyOnDemand Boolean,
+  telefonePrincipal String,
+  telefoneSecundario String,
+  site String,
+  emailContato String required,
+  latitude BigDecimal required,
+  longitude BigDecimal required
+}
+entity Evento {
+  dataEvento ZonedDateTime,
+  finalizado Boolean,
+  onDemand Boolean,
+  horaInicioHappyOnDemand ZonedDateTime,
+  horaAgendadaFimHappyOnDemand ZonedDateTime
+}
+entity Imagem {
+  tipo TipoImagem required,
+  url String required
+}
+entity Ponto {
+  dataObtensao LocalDate required,
+  dataExpiracao LocalDate,
+  quantidade Integer required
+}
+entity Usuario {
+	/**
+	 * Token returned from the provider, problably expired in future uses after
+	 * first login. Necessary to get the user id, 'subject', from google
+	 */
+    providerIdToken String,
+    email String required,
+    displayName String  required,
+    familyName String  required,
+    givenName String  required,
+    /**
+	 * Login provider
+	 */
+    provider String  required,
+    /**
+	 * Google Auth code that can be exchanged for an access token and refresh
+	 * token for offline access
+	 */
+    authCode String,
+	/**
+	 * Id from the provider, google or facebook
+	 */    
+    providerUserId String,
+    imageUrl String,
+    gender String,
+    telephone String  required
+}
+entity UsuarioSettings {    
+    searchRadius Integer,
+    geofances Boolean,
+    notifications Boolean,
+    promotions Boolean
+}
+entity UsuarioEmpresa {
+  tipoAcesso TipoAcesso,
+  ativo Boolean required,
+  dataAtivado LocalDate,
+  dataInativado LocalDate
+}
+entity UsuarioEvento {
+	dataChegada ZonedDateTime
+}
+enum TipoAcesso {
+  ADMIN,
+  EDIT,
+  OWNER
+}
+enum TipoImagem { 
+	ICONE, ILUSTRACAO
+}
+
+relationship OneToMany {
+//um usuario pode ter muitas empresas
+//uma empresa pode ter muitos usuarios
+  Usuario{empresas} to UsuarioEmpresa{usuario},
+  Empresa{usuarios} to UsuarioEmpresa{empresa},
+//um usuario pode participar de muitos eventos
+//um evento pode ter muitos usuarios(participantes)
+  Usuario{eventos} to UsuarioEvento{usuario},  
+  Evento{usuarios} to UsuarioEvento{evento},
+//um usuario tem muitos pontos
+//uma pontuacao foi gerada para apenas um usuario em um determinado local
+  Usuario{pontos} to Ponto{usuario},
+//um evento tem muitos pontos
+//uma pontuacao foi gerada em apenas um local
+  Evento{pontos} to Ponto{evento},  
+//uma empresa pode carregar varias imagens  
+//uma imagem pertence à apenas um local
+  Empresa{imagens} to Imagem{empresa},
+//numa empresa podem ocorrer diversos eventos
+//um evento só ocorre em uma empresa
+  Empresa{eventos} to Evento{empresa}
+}
+relationship OneToOne {
+	Usuario{settings} to UsuarioSettings{usuario}	
+}
+
+##########
+# options
+##########
+service Usuario with serviceClass
+dto Usuario with mapstruct
+skipClient for *

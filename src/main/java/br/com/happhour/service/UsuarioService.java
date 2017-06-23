@@ -5,6 +5,9 @@ import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.security.GeneralSecurityException;
 import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,19 +23,22 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import br.com.happhour.domain.Usuario;
 import br.com.happhour.repository.UsuarioRepository;
 
+/**
+ * Service Implementation for managing Usuario.
+ */
 @Service
 @Transactional
 public class UsuarioService {
 
-	private final Logger log = LoggerFactory.getLogger(UsuarioService.class);
+    private final Logger log = LoggerFactory.getLogger(UsuarioService.class);
 
 	private final UsuarioRepository usuarioRepository;
 
 	public UsuarioService(UsuarioRepository usuarioRepository) {
 		this.usuarioRepository = usuarioRepository;
-	}
+    }
 
-	public Usuario createUsuario(Usuario user) {
+	public Usuario createUsuarioFromProvider(Usuario user) {
 		switch (user.getProvider()) {
 		case "google":
 			validateAndMergeGoogleTokenInfo(user);
@@ -60,8 +66,7 @@ public class UsuarioService {
 				.setProxy(new Proxy(Proxy.Type.HTTP, new InetSocketAddress("localhost", 3128))).build();
 
 		GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(netHttpTransport,
-				JacksonFactory.getDefaultInstance())
-				.setAudience(Collections.singletonList(CLIENT_ID)).build();
+				JacksonFactory.getDefaultInstance()).setAudience(Collections.singletonList(CLIENT_ID)).build();
 
 		try {
 			GoogleIdToken idToken = verifier.verify(user.getProviderIdToken());
@@ -99,4 +104,49 @@ public class UsuarioService {
 			// TODO: Google Token Excessao customizada se não validar o token
 		}
 	}
+
+    /**
+     * Save a usuario.
+     *
+     * @param Usuario the entity to save
+     * @return the persisted entity
+     */
+	public Usuario save(Usuario Usuario) {
+		log.debug("Request to save Usuario : {}", Usuario);
+		return usuarioRepository.save(Usuario);
+    }
+
+    /**
+     *  Get all the usuarios.
+     *
+     *  @return the list of entities
+     */
+    @Transactional(readOnly = true)
+	public List<Usuario> findAll() {
+        log.debug("Request to get all Usuarios");
+		return usuarioRepository.findAll().stream()
+            .collect(Collectors.toCollection(LinkedList::new));
+    }
+
+    /**
+     *  Get one usuario by id.
+     *
+     *  @param id the id of the entity
+     *  @return the entity
+     */
+    @Transactional(readOnly = true)
+	public Usuario findOne(Long id) {
+        log.debug("Request to get Usuario : {}", id);
+		return usuarioRepository.findOne(id);
+    }
+
+    /**
+     *  Delete the  usuario by id.
+     *
+     *  @param id the id of the entity
+     */
+    public void delete(Long id) {
+        log.debug("Request to delete Usuario : {}", id);
+        usuarioRepository.delete(id);
+    }
 }

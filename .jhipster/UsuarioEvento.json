@@ -1,0 +1,29 @@
+{
+    "fluentMethods": true,
+    "relationships": [
+        {
+            "relationshipType": "many-to-one",
+            "relationshipName": "usuario",
+            "otherEntityName": "usuario",
+            "otherEntityField": "id"
+        },
+        {
+            "relationshipType": "many-to-one",
+            "relationshipName": "evento",
+            "otherEntityName": "evento",
+            "otherEntityField": "id"
+        }
+    ],
+    "fields": [
+        {
+            "fieldName": "dataChegada",
+            "fieldType": "ZonedDateTime"
+        }
+    ],
+    "changelogDate": "20170623185513",
+    "entityTableName": "usuario_evento",
+    "dto": "no",
+    "pagination": "no",
+    "service": "no",
+    "skipClient": true
+}

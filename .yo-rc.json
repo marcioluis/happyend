@@ -1,0 +1,35 @@
+{
+  "generator-jhipster": {
+    "promptValues": {
+      "packageName": "br.com.happhour",
+      "nativeLanguage": "pt-br"
+    },
+    "jhipsterVersion": "4.5.5",
+    "baseName": "happyend",
+    "packageName": "br.com.happhour",
+    "packageFolder": "br/com/happhour",
+    "serverPort": "8089",
+    "authenticationType": "jwt",
+    "hibernateCache": "hazelcast",
+    "clusteredHttpSession": false,
+    "websocket": false,
+    "databaseType": "sql",
+    "devDatabaseType": "h2Disk",
+    "prodDatabaseType": "mysql",
+    "searchEngine": false,
+    "messageBroker": false,
+    "serviceDiscoveryType": false,
+    "buildTool": "maven",
+    "enableSocialSignIn": false,
+    "jwtSecretKey": "c4b55931eea63e0b17e69448c89cbbbfaec8adf0",
+    "enableTranslation": false,
+    "applicationType": "microservice",
+    "testFrameworks": [],
+    "jhiPrefix": "jhi",    
+    "skipClient": true,
+    "skipUserManagement": true,
+    "nativeLanguage": "pt-br",
+    "languages": ["pt-br"],
+    "clientPackageManager": "yarn"
+  }
+}

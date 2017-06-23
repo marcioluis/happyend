@@ -1,0 +1,93 @@
+{
+    "fluentMethods": true,
+    "relationships": [
+        {
+            "relationshipType": "one-to-many",
+            "relationshipName": "usuarios",
+            "otherEntityName": "usuarioEmpresa",
+            "otherEntityRelationshipName": "empresa"
+        },
+        {
+            "relationshipType": "one-to-many",
+            "relationshipName": "imagens",
+            "otherEntityName": "imagem",
+            "otherEntityRelationshipName": "empresa"
+        },
+        {
+            "relationshipType": "one-to-many",
+            "relationshipName": "eventos",
+            "otherEntityName": "evento",
+            "otherEntityRelationshipName": "empresa"
+        }
+    ],
+    "fields": [
+        {
+            "fieldName": "cnpj",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "nome",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "nomeExibicao",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "ativa",
+            "fieldType": "Boolean",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "happyOnDemand",
+            "fieldType": "Boolean"
+        },
+        {
+            "fieldName": "telefonePrincipal",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "telefoneSecundario",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "site",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "emailContato",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "latitude",
+            "fieldType": "BigDecimal",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "longitude",
+            "fieldType": "BigDecimal",
+            "fieldValidateRules": [
+                "required"
+            ]
+        }
+    ],
+    "changelogDate": "20170623185506",
+    "entityTableName": "empresa",
+    "dto": "no",
+    "pagination": "no",
+    "service": "no",
+    "skipClient": true
+}

@@ -1,25 +1,15 @@
 package br.com.happhour.domain;
 
-import java.io.Serializable;
-import java.time.ZonedDateTime;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import javax.persistence.*;
+import java.io.Serializable;
+import java.time.ZonedDateTime;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.Objects;
 
 /**
  * A Evento.
@@ -32,8 +22,7 @@ public class Evento implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequenceGenerator")
-    @SequenceGenerator(name = "sequenceGenerator")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "data_evento")
@@ -54,7 +43,12 @@ public class Evento implements Serializable {
     @OneToMany(mappedBy = "evento")
     @JsonIgnore
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-    private Set<UsuarioEvento> participantes = new HashSet<>();
+    private Set<UsuarioEvento> usuarios = new HashSet<>();
+
+    @OneToMany(mappedBy = "evento")
+    @JsonIgnore
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    private Set<Ponto> pontos = new HashSet<>();
 
     @ManyToOne
     private Empresa empresa;
@@ -132,29 +126,54 @@ public class Evento implements Serializable {
         this.horaAgendadaFimHappyOnDemand = horaAgendadaFimHappyOnDemand;
     }
 
-    public Set<UsuarioEvento> getParticipantes() {
-        return participantes;
+    public Set<UsuarioEvento> getUsuarios() {
+        return usuarios;
     }
 
-    public Evento participantes(Set<UsuarioEvento> usuarioEventos) {
-        this.participantes = usuarioEventos;
+    public Evento usuarios(Set<UsuarioEvento> usuarioEventos) {
+        this.usuarios = usuarioEventos;
         return this;
     }
 
-    public Evento addParticipantes(UsuarioEvento usuarioEvento) {
-        this.participantes.add(usuarioEvento);
+    public Evento addUsuarios(UsuarioEvento usuarioEvento) {
+        this.usuarios.add(usuarioEvento);
         usuarioEvento.setEvento(this);
         return this;
     }
 
-    public Evento removeParticipantes(UsuarioEvento usuarioEvento) {
-        this.participantes.remove(usuarioEvento);
+    public Evento removeUsuarios(UsuarioEvento usuarioEvento) {
+        this.usuarios.remove(usuarioEvento);
         usuarioEvento.setEvento(null);
         return this;
     }
 
-    public void setParticipantes(Set<UsuarioEvento> usuarioEventos) {
-        this.participantes = usuarioEventos;
+    public void setUsuarios(Set<UsuarioEvento> usuarioEventos) {
+        this.usuarios = usuarioEventos;
+    }
+
+    public Set<Ponto> getPontos() {
+        return pontos;
+    }
+
+    public Evento pontos(Set<Ponto> pontos) {
+        this.pontos = pontos;
+        return this;
+    }
+
+    public Evento addPontos(Ponto ponto) {
+        this.pontos.add(ponto);
+        ponto.setEvento(this);
+        return this;
+    }
+
+    public Evento removePontos(Ponto ponto) {
+        this.pontos.remove(ponto);
+        ponto.setEvento(null);
+        return this;
+    }
+
+    public void setPontos(Set<Ponto> pontos) {
+        this.pontos = pontos;
     }
 
     public Empresa getEmpresa() {
@@ -179,26 +198,26 @@ public class Evento implements Serializable {
             return false;
         }
         Evento evento = (Evento) o;
-        if (evento.id == null || id == null) {
+        if (evento.getId() == null || getId() == null) {
             return false;
         }
-        return Objects.equals(id, evento.id);
+        return Objects.equals(getId(), evento.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id);
+        return Objects.hashCode(getId());
     }
 
     @Override
     public String toString() {
         return "Evento{" +
-            "id=" + id +
-            ", dataEvento='" + dataEvento + "'" +
-            ", finalizado='" + finalizado + "'" +
-            ", onDemand='" + onDemand + "'" +
-            ", horaInicioHappyOnDemand='" + horaInicioHappyOnDemand + "'" +
-            ", horaAgendadaFimHappyOnDemand='" + horaAgendadaFimHappyOnDemand + "'" +
-            '}';
+            "id=" + getId() +
+            ", dataEvento='" + getDataEvento() + "'" +
+            ", finalizado='" + isFinalizado() + "'" +
+            ", onDemand='" + isOnDemand() + "'" +
+            ", horaInicioHappyOnDemand='" + getHoraInicioHappyOnDemand() + "'" +
+            ", horaAgendadaFimHappyOnDemand='" + getHoraAgendadaFimHappyOnDemand() + "'" +
+            "}";
     }
 }
