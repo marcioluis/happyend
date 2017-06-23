@@ -1,4 +1,4 @@
-package br.com.happhour.web;
+package br.com.happhour.web.filter;
 
 import java.io.IOException;
 
