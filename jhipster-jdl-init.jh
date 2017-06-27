@@ -27,12 +27,7 @@ entity Ponto {
   dataExpiracao LocalDate,
   quantidade Integer required
 }
-entity Usuario {
-	/**
-	 * Token returned from the provider, problably expired in future uses after
-	 * first login. Necessary to get the user id, 'subject', from google
-	 */
-    providerIdToken String,
+entity Usuario {	
     email String required,
     displayName String  required,
     familyName String  required,
@@ -101,12 +96,12 @@ relationship OneToMany {
   Empresa{eventos} to Evento{empresa}
 }
 relationship OneToOne {
-	Usuario{settings} to UsuarioSettings{usuario}	
+	UsuarioSettings{usuario} to Usuario{settings}	
 }
 
-##########
-# options
-##########
+/////////////
+// options
+////////////
 service Usuario with serviceClass
 dto Usuario with mapstruct
 skipClient for *

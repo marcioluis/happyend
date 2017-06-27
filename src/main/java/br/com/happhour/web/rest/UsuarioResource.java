@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.happhour.domain.Usuario;
 import br.com.happhour.service.UsuarioService;
+import br.com.happhour.service.dto.UsuarioDTO;
 import br.com.happhour.web.rest.util.HeaderUtil;
 import br.com.happhour.web.rest.util.ResponseUtil;
 
@@ -44,7 +45,7 @@ public class UsuarioResource {
 	/**
 	 * POST /usuarios : Create a new usuario.
 	 *
-	 * @param Usuario
+	 * @param usuario
 	 *            the Usuario to create
 	 * @return the ResponseEntity with status 201 (Created) and with body the
 	 *         new Usuario, or with status 400 (Bad Request) if the usuario has
@@ -53,16 +54,16 @@ public class UsuarioResource {
 	 *             if the Location URI syntax is incorrect
 	 */
 	@PostMapping("/usuarios")
-	public ResponseEntity<Usuario> createUsuario(@Valid @RequestBody Usuario Usuario) throws URISyntaxException {
-		log.debug("REST request to save Usuario : {}", Usuario);
-		if (Usuario.getId() != null) {
+	public ResponseEntity<UsuarioDTO> createUsuario(@Valid @RequestBody UsuarioDTO usuario) throws URISyntaxException {
+		log.debug("REST request to save Usuario : {}", usuario);
+		if (usuario.getId() != null) {
 			return ResponseEntity.badRequest().headers(
 					HeaderUtil.createFailureAlert(ENTITY_NAME, "idexists", "A new usuario cannot already have an ID"))
 					.body(null);
 		}
-		Usuario result = usuarioService.createUsuarioFromProvider(Usuario);
-		return ResponseEntity.created(new URI("/api/usuarios/" + result.getId()))
-				.headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString())).body(result);
+		UsuarioDTO dto = usuarioService.createUsuarioFromProvider(usuario);
+		return ResponseEntity.created(new URI("/api/usuarios/" + dto.getId()))
+				.headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, dto.getId().toString())).body(dto);
 	}
 
 	/**
@@ -78,12 +79,10 @@ public class UsuarioResource {
 	 *             if the Location URI syntax is incorrect
 	 */
 	@PutMapping("/usuarios")
-	public ResponseEntity<Usuario> updateUsuario(@Valid @RequestBody Usuario Usuario) throws URISyntaxException {
+	public ResponseEntity<Usuario> updateUsuario(@Valid @RequestBody UsuarioDTO Usuario) throws URISyntaxException {
 		log.debug("REST request to update Usuario : {}", Usuario);
-		if (Usuario.getId() == null) {
-			return createUsuario(Usuario);
-		}
-		Usuario result = usuarioService.save(Usuario);
+
+		Usuario result = null;
 		return ResponseEntity.ok().headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, Usuario.getId().toString()))
 				.body(result);
 	}

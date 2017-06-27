@@ -18,8 +18,9 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken.Payload;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 
 import br.com.happhour.HappyendApplication;
-import br.com.happhour.domain.Usuario;
 import br.com.happhour.repository.UsuarioRepository;
+import br.com.happhour.service.dto.UsuarioDTO;
+import br.com.happhour.service.mapper.UsuarioMapper;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = HappyendApplication.class)
@@ -31,6 +32,9 @@ public class UsuarioServiceIntTest {
 
 	@Autowired
 	private UsuarioRepository usuarioRepository;
+
+	@Autowired
+	private UsuarioMapper usuarioMapper;
 
 	@Mock
 	private GoogleIdTokenVerifier verifier;
@@ -53,19 +57,20 @@ public class UsuarioServiceIntTest {
 		pay.setSubject("12345678910");
 		when(verifier.verify("token")).thenReturn(idToken);
 		when(idToken.getPayload()).thenReturn(pay);
+		// criar o servico com o mock do google
+		usuarioService.setVerifier(verifier);
 
-		Usuario usu = new Usuario();
+		// setup e teste
+		UsuarioDTO usu = new UsuarioDTO();
 		usu.setEmail("marciotester@gmai.com");
 		usu.setDisplayName("Marcio Teste");
 		usu.setFamilyName("Teste");
 		usu.setGivenName("Marcio Teste");
 		usu.setTelephone("+55 69 993999777");
-		usu.setImageUrl(
-				"https://lh3.googleusercontent.com/-1wkcrKBKpl4/AAAAAAAAAAI/AAAAAAAAACs/V2h_JuDaKks/s96-c/photo.jpg");
+		usu.setImageUrl("https://lh3.googleusercontent.com/photo.jpg");
 		usu.setProviderIdToken("token");
 		usu.setProvider("google");
-		// criar o servico com o mock do google
-		usuarioService = new UsuarioService(usuarioRepository, verifier);
+
 		usu = usuarioService.createUsuarioFromProvider(usu);
 
 		assertThat(usu.getId()).isNotNull();
@@ -78,7 +83,7 @@ public class UsuarioServiceIntTest {
 
 	@Test
 	public void criar_usuario_facebook_provider() {
-		Usuario usu = new Usuario();
+		UsuarioDTO usu = new UsuarioDTO();
 		usu.setEmail("marciotester@gmail.com");
 		usu.setDisplayName("Marcio Teste");
 		usu.setFamilyName("Teste");
@@ -102,7 +107,7 @@ public class UsuarioServiceIntTest {
 	@Test
 	public void usuario_facebook_provider_existente() {
 		// cria um usuario na base
-		Usuario usu = new Usuario();
+		UsuarioDTO usu = new UsuarioDTO();
 		usu.setEmail("marciotester@gmail.com");
 		usu.setDisplayName("Marcio Teste");
 		usu.setFamilyName("Teste");
@@ -110,9 +115,10 @@ public class UsuarioServiceIntTest {
 		usu.setTelephone("+55 69 993999777");
 		usu.setProvider("facebook");
 		usu.setProviderUserId("123456789");
-		usuarioRepository.save(usu);
+		usuarioRepository.save(usuarioMapper.toEntity(usu));
+
 		// novo usuario simulando um novo login
-		usu = new Usuario();
+		usu = new UsuarioDTO();
 		usu.setEmail("novoEmail@gmail.com");
 		usu.setDisplayName("Marcio Novo");
 		usu.setFamilyName("Re login");
@@ -144,9 +150,12 @@ public class UsuarioServiceIntTest {
 		pay.setSubject("123456789");/// provider user id
 		when(verifier.verify("token")).thenReturn(idToken);
 		when(idToken.getPayload()).thenReturn(pay);
+		// criar o servico com o mock do google
+		usuarioService.setVerifier(verifier);
 
+		// setup e testes
 		// cria um usuario na base
-		Usuario usu = new Usuario();
+		UsuarioDTO usu = new UsuarioDTO();
 		usu.setEmail("marciotester@gmail.com");
 		usu.setDisplayName("Marcio Teste");
 		usu.setFamilyName("Teste");
@@ -154,9 +163,9 @@ public class UsuarioServiceIntTest {
 		usu.setTelephone("+55 69 993999777");
 		usu.setProvider("google");
 		usu.setProviderUserId("123456789");
-		usuarioRepository.save(usu);
+		usuarioRepository.save(usuarioMapper.toEntity(usu));
 		// novo usuario simulando um novo login
-		usu = new Usuario();
+		usu = new UsuarioDTO();
 		usu.setEmail("novoEmail@gmail.com");
 		usu.setDisplayName("Marcio Replace pelo token");
 		usu.setFamilyName("Re login");
@@ -164,8 +173,7 @@ public class UsuarioServiceIntTest {
 		usu.setTelephone("+55 69 993999778");
 		usu.setProvider("google");
 		usu.setProviderIdToken("token");
-		// criar o servico com o mock do google
-		usuarioService = new UsuarioService(usuarioRepository, verifier);
+
 		usu = usuarioService.createUsuarioFromProvider(usu);
 
 		assertThat(usu.getId()).isNotNull();

@@ -2,14 +2,6 @@
     "fluentMethods": true,
     "relationships": [
         {
-            "relationshipType": "one-to-one",
-            "relationshipName": "settings",
-            "otherEntityName": "usuarioSettings",
-            "otherEntityField": "id",
-            "ownerSide": true,
-            "otherEntityRelationshipName": "usuario"
-        },
-        {
             "relationshipType": "one-to-many",
             "relationshipName": "empresas",
             "otherEntityName": "usuarioEmpresa",
@@ -26,14 +18,16 @@
             "relationshipName": "pontos",
             "otherEntityName": "ponto",
             "otherEntityRelationshipName": "usuario"
+        },
+        {
+            "relationshipName": "settings",
+            "otherEntityName": "usuarioSettings",
+            "relationshipType": "one-to-one",
+            "ownerSide": false,
+            "otherEntityRelationshipName": "usuario"
         }
     ],
     "fields": [
-        {
-            "fieldName": "providerIdToken",
-            "javadoc": "Token returned from the provider, problably expired in future uses after\nfirst login. Necessary to get the user id, 'subject', from google",
-            "fieldType": "String"
-        },
         {
             "fieldName": "email",
             "fieldType": "String",
@@ -97,9 +91,10 @@
         }
     ],
     "changelogDate": "20170623185510",
-    "entityTableName": "usuario",
     "dto": "mapstruct",
-    "pagination": "no",
     "service": "serviceClass",
-    "skipClient": true
+    "entityTableName": "usuario",
+    "pagination": "no",
+    "microserviceName": "happyend",
+    "searchEngine": false
 }

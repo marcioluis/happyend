@@ -1,28 +1,16 @@
 package br.com.happhour.domain;
 
-import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.validation.constraints.NotNull;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import io.swagger.annotations.ApiModelProperty;
+import javax.persistence.*;
+import javax.validation.constraints.*;
+import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.Objects;
 
 /**
  * A Usuario.
@@ -37,14 +25,6 @@ public class Usuario implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    /**
-     * Token returned from the provider, problably expired in future uses after
-     * first login. Necessary to get the user id, 'subject', from google
-     */
-    @ApiModelProperty(value = "Token returned from the provider, problably expired in future uses after first login. Necessary to get the user id, 'subject', from google")
-	@Transient
-    private String providerIdToken;
 
     @NotNull
     @Column(name = "email", nullable = false)
@@ -95,10 +75,6 @@ public class Usuario implements Serializable {
     @Column(name = "telephone", nullable = false)
     private String telephone;
 
-    @OneToOne
-    @JoinColumn(unique = true)
-    private UsuarioSettings settings;
-
     @OneToMany(mappedBy = "usuario")
     @JsonIgnore
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
@@ -114,25 +90,16 @@ public class Usuario implements Serializable {
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<Ponto> pontos = new HashSet<>();
 
+    @OneToOne(mappedBy = "usuario")
+    @JsonIgnore
+    private UsuarioSettings settings;
+
     public Long getId() {
         return id;
     }
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getProviderIdToken() {
-        return providerIdToken;
-    }
-
-    public Usuario providerIdToken(String providerIdToken) {
-        this.providerIdToken = providerIdToken;
-        return this;
-    }
-
-    public void setProviderIdToken(String providerIdToken) {
-        this.providerIdToken = providerIdToken;
     }
 
     public String getEmail() {
@@ -265,19 +232,6 @@ public class Usuario implements Serializable {
         this.telephone = telephone;
     }
 
-    public UsuarioSettings getSettings() {
-        return settings;
-    }
-
-    public Usuario settings(UsuarioSettings usuarioSettings) {
-        this.settings = usuarioSettings;
-        return this;
-    }
-
-    public void setSettings(UsuarioSettings usuarioSettings) {
-        this.settings = usuarioSettings;
-    }
-
     public Set<UsuarioEmpresa> getEmpresas() {
         return empresas;
     }
@@ -353,6 +307,19 @@ public class Usuario implements Serializable {
         this.pontos = pontos;
     }
 
+    public UsuarioSettings getSettings() {
+        return settings;
+    }
+
+    public Usuario settings(UsuarioSettings usuarioSettings) {
+        this.settings = usuarioSettings;
+        return this;
+    }
+
+    public void setSettings(UsuarioSettings usuarioSettings) {
+        this.settings = usuarioSettings;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -377,7 +344,6 @@ public class Usuario implements Serializable {
     public String toString() {
         return "Usuario{" +
             "id=" + getId() +
-            ", providerIdToken='" + getProviderIdToken() + "'" +
             ", email='" + getEmail() + "'" +
             ", displayName='" + getDisplayName() + "'" +
             ", familyName='" + getFamilyName() + "'" +
