@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.happhour.domain.Usuario;
+import br.com.happhour.domain.UsuarioSettings;
 import br.com.happhour.service.UsuarioService;
 import br.com.happhour.service.dto.UsuarioDTO;
 import br.com.happhour.web.rest.util.HeaderUtil;
@@ -64,6 +65,29 @@ public class UsuarioResource {
 		UsuarioDTO dto = usuarioService.createUsuarioFromProvider(usuario);
 		return ResponseEntity.created(new URI("/api/usuarios/" + dto.getId()))
 				.headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, dto.getId().toString())).body(dto);
+	}
+
+	/**
+	 * POST /usuarios/{id}/settings : Cria ou atualiza os settings do usuario.
+	 * 
+	 * @param settings
+	 *            settings para atualizacao
+	 * @param userId
+	 *            id do usuario que deve atualizar os settings
+	 * @return os settings atualizados
+	 * 
+	 * @throws URISyntaxException
+	 */
+	@PostMapping("/usuarios/{id}/settings")
+	public ResponseEntity<UsuarioSettings> updateSettings(@Valid @RequestBody UsuarioSettings settings,
+			@PathVariable("id") Long userId) throws URISyntaxException {
+		log.debug("REST request to update Usuario Settings: {}", settings);
+
+		Usuario usuario = usuarioService.updateSettings(settings, userId);
+		settings = usuario.getSettings();
+
+		return ResponseEntity.ok().headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, userId.toString()))
+				.body(settings);
 	}
 
 	/**

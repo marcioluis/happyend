@@ -19,6 +19,7 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
 
 import br.com.happhour.domain.Usuario;
+import br.com.happhour.domain.UsuarioSettings;
 import br.com.happhour.repository.UsuarioRepository;
 import br.com.happhour.service.dto.UsuarioDTO;
 import br.com.happhour.service.mapper.UsuarioMapper;
@@ -189,5 +190,12 @@ public class UsuarioService {
 
 	public void setVerifier(GoogleIdTokenVerifier verifier) {
 		this.verifier = verifier;
+	}
+
+	public Usuario updateSettings(UsuarioSettings settings, Long userId) {
+		Usuario usuario = usuarioRepository.findOne(userId);
+		settings.setUsuario(usuario);
+		usuario.setSettings(settings);
+		return usuarioRepository.save(usuario);
 	}
 }
