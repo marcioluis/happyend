@@ -1,20 +1,12 @@
 package br.com.happhour.domain;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
+import javax.persistence.*;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.Objects;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
  * A UsuarioEvento.
@@ -27,18 +19,17 @@ public class UsuarioEvento implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequenceGenerator")
-    @SequenceGenerator(name = "sequenceGenerator")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "data_chegada")
     private ZonedDateTime dataChegada;
 
     @ManyToOne
-    private Evento evento;
+    private Usuario usuario;
 
     @ManyToOne
-    private Usuario usuario;
+    private Evento evento;
 
     public Long getId() {
         return id;
@@ -61,19 +52,6 @@ public class UsuarioEvento implements Serializable {
         this.dataChegada = dataChegada;
     }
 
-    public Evento getEvento() {
-        return evento;
-    }
-
-    public UsuarioEvento evento(Evento evento) {
-        this.evento = evento;
-        return this;
-    }
-
-    public void setEvento(Evento evento) {
-        this.evento = evento;
-    }
-
     public Usuario getUsuario() {
         return usuario;
     }
@@ -87,6 +65,19 @@ public class UsuarioEvento implements Serializable {
         this.usuario = usuario;
     }
 
+    public Evento getEvento() {
+        return evento;
+    }
+
+    public UsuarioEvento evento(Evento evento) {
+        this.evento = evento;
+        return this;
+    }
+
+    public void setEvento(Evento evento) {
+        this.evento = evento;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -96,22 +87,22 @@ public class UsuarioEvento implements Serializable {
             return false;
         }
         UsuarioEvento usuarioEvento = (UsuarioEvento) o;
-        if (usuarioEvento.id == null || id == null) {
+        if (usuarioEvento.getId() == null || getId() == null) {
             return false;
         }
-        return Objects.equals(id, usuarioEvento.id);
+        return Objects.equals(getId(), usuarioEvento.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id);
+        return Objects.hashCode(getId());
     }
 
     @Override
     public String toString() {
         return "UsuarioEvento{" +
-            "id=" + id +
-            ", dataChegada='" + dataChegada + "'" +
-            '}';
+            "id=" + getId() +
+            ", dataChegada='" + getDataChegada() + "'" +
+            "}";
     }
 }

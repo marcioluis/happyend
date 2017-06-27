@@ -1,0 +1,36 @@
+{
+    "fluentMethods": true,
+    "relationships": [
+        {
+            "relationshipType": "one-to-one",
+            "relationshipName": "usuario",
+            "otherEntityName": "usuario",
+            "ownerSide": false,
+            "otherEntityRelationshipName": "settings"
+        }
+    ],
+    "fields": [
+        {
+            "fieldName": "searchRadius",
+            "fieldType": "Integer"
+        },
+        {
+            "fieldName": "geofances",
+            "fieldType": "Boolean"
+        },
+        {
+            "fieldName": "notifications",
+            "fieldType": "Boolean"
+        },
+        {
+            "fieldName": "promotions",
+            "fieldType": "Boolean"
+        }
+    ],
+    "changelogDate": "20170623185511",
+    "entityTableName": "usuario_settings",
+    "dto": "no",
+    "pagination": "no",
+    "service": "no",
+    "skipClient": true
+}

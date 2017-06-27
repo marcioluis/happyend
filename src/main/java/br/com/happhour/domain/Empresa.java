@@ -1,25 +1,16 @@
 package br.com.happhour.domain;
 
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import javax.persistence.*;
+import javax.validation.constraints.*;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.Objects;
 
 /**
  * A Empresa.
@@ -32,8 +23,7 @@ public class Empresa implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequenceGenerator")
-    @SequenceGenerator(name = "sequenceGenerator")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotNull
@@ -78,12 +68,17 @@ public class Empresa implements Serializable {
     @OneToMany(mappedBy = "empresa")
     @JsonIgnore
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    private Set<UsuarioEmpresa> usuarios = new HashSet<>();
+
+    @OneToMany(mappedBy = "empresa")
+    @JsonIgnore
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<Imagem> imagens = new HashSet<>();
 
     @OneToMany(mappedBy = "empresa")
     @JsonIgnore
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-    private Set<UsuarioEmpresa> usuarios = new HashSet<>();
+    private Set<Evento> eventos = new HashSet<>();
 
     public Long getId() {
         return id;
@@ -236,31 +231,6 @@ public class Empresa implements Serializable {
         this.longitude = longitude;
     }
 
-    public Set<Imagem> getImagens() {
-        return imagens;
-    }
-
-    public Empresa imagens(Set<Imagem> imagems) {
-        this.imagens = imagems;
-        return this;
-    }
-
-    public Empresa addImagens(Imagem imagem) {
-        this.imagens.add(imagem);
-        imagem.setEmpresa(this);
-        return this;
-    }
-
-    public Empresa removeImagens(Imagem imagem) {
-        this.imagens.remove(imagem);
-        imagem.setEmpresa(null);
-        return this;
-    }
-
-    public void setImagens(Set<Imagem> imagems) {
-        this.imagens = imagems;
-    }
-
     public Set<UsuarioEmpresa> getUsuarios() {
         return usuarios;
     }
@@ -286,6 +256,56 @@ public class Empresa implements Serializable {
         this.usuarios = usuarioEmpresas;
     }
 
+    public Set<Imagem> getImagens() {
+        return imagens;
+    }
+
+    public Empresa imagens(Set<Imagem> imagems) {
+        this.imagens = imagems;
+        return this;
+    }
+
+    public Empresa addImagens(Imagem imagem) {
+        this.imagens.add(imagem);
+        imagem.setEmpresa(this);
+        return this;
+    }
+
+    public Empresa removeImagens(Imagem imagem) {
+        this.imagens.remove(imagem);
+        imagem.setEmpresa(null);
+        return this;
+    }
+
+    public void setImagens(Set<Imagem> imagems) {
+        this.imagens = imagems;
+    }
+
+    public Set<Evento> getEventos() {
+        return eventos;
+    }
+
+    public Empresa eventos(Set<Evento> eventos) {
+        this.eventos = eventos;
+        return this;
+    }
+
+    public Empresa addEventos(Evento evento) {
+        this.eventos.add(evento);
+        evento.setEmpresa(this);
+        return this;
+    }
+
+    public Empresa removeEventos(Evento evento) {
+        this.eventos.remove(evento);
+        evento.setEmpresa(null);
+        return this;
+    }
+
+    public void setEventos(Set<Evento> eventos) {
+        this.eventos = eventos;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -295,32 +315,32 @@ public class Empresa implements Serializable {
             return false;
         }
         Empresa empresa = (Empresa) o;
-        if (empresa.id == null || id == null) {
+        if (empresa.getId() == null || getId() == null) {
             return false;
         }
-        return Objects.equals(id, empresa.id);
+        return Objects.equals(getId(), empresa.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id);
+        return Objects.hashCode(getId());
     }
 
     @Override
     public String toString() {
         return "Empresa{" +
-            "id=" + id +
-            ", cnpj='" + cnpj + "'" +
-            ", nome='" + nome + "'" +
-            ", nomeExibicao='" + nomeExibicao + "'" +
-            ", ativa='" + ativa + "'" +
-            ", happyOnDemand='" + happyOnDemand + "'" +
-            ", telefonePrincipal='" + telefonePrincipal + "'" +
-            ", telefoneSecundario='" + telefoneSecundario + "'" +
-            ", site='" + site + "'" +
-            ", emailContato='" + emailContato + "'" +
-            ", latitude='" + latitude + "'" +
-            ", longitude='" + longitude + "'" +
-            '}';
+            "id=" + getId() +
+            ", cnpj='" + getCnpj() + "'" +
+            ", nome='" + getNome() + "'" +
+            ", nomeExibicao='" + getNomeExibicao() + "'" +
+            ", ativa='" + isAtiva() + "'" +
+            ", happyOnDemand='" + isHappyOnDemand() + "'" +
+            ", telefonePrincipal='" + getTelefonePrincipal() + "'" +
+            ", telefoneSecundario='" + getTelefoneSecundario() + "'" +
+            ", site='" + getSite() + "'" +
+            ", emailContato='" + getEmailContato() + "'" +
+            ", latitude='" + getLatitude() + "'" +
+            ", longitude='" + getLongitude() + "'" +
+            "}";
     }
 }

@@ -1,21 +1,13 @@
 package br.com.happhour.domain;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
+import javax.persistence.*;
+import javax.validation.constraints.*;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Objects;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
  * A Ponto.
@@ -28,8 +20,7 @@ public class Ponto implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequenceGenerator")
-    @SequenceGenerator(name = "sequenceGenerator")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotNull
@@ -44,10 +35,10 @@ public class Ponto implements Serializable {
     private Integer quantidade;
 
     @ManyToOne
-    private Evento evento;
+    private Usuario usuario;
 
     @ManyToOne
-    private Usuario usuario;
+    private Evento evento;
 
     public Long getId() {
         return id;
@@ -96,19 +87,6 @@ public class Ponto implements Serializable {
         this.quantidade = quantidade;
     }
 
-    public Evento getEvento() {
-        return evento;
-    }
-
-    public Ponto evento(Evento evento) {
-        this.evento = evento;
-        return this;
-    }
-
-    public void setEvento(Evento evento) {
-        this.evento = evento;
-    }
-
     public Usuario getUsuario() {
         return usuario;
     }
@@ -122,6 +100,19 @@ public class Ponto implements Serializable {
         this.usuario = usuario;
     }
 
+    public Evento getEvento() {
+        return evento;
+    }
+
+    public Ponto evento(Evento evento) {
+        this.evento = evento;
+        return this;
+    }
+
+    public void setEvento(Evento evento) {
+        this.evento = evento;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -131,24 +122,24 @@ public class Ponto implements Serializable {
             return false;
         }
         Ponto ponto = (Ponto) o;
-        if (ponto.id == null || id == null) {
+        if (ponto.getId() == null || getId() == null) {
             return false;
         }
-        return Objects.equals(id, ponto.id);
+        return Objects.equals(getId(), ponto.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id);
+        return Objects.hashCode(getId());
     }
 
     @Override
     public String toString() {
         return "Ponto{" +
-            "id=" + id +
-            ", dataObtensao='" + dataObtensao + "'" +
-            ", dataExpiracao='" + dataExpiracao + "'" +
-            ", quantidade='" + quantidade + "'" +
-            '}';
+            "id=" + getId() +
+            ", dataObtensao='" + getDataObtensao() + "'" +
+            ", dataExpiracao='" + getDataExpiracao() + "'" +
+            ", quantidade='" + getQuantidade() + "'" +
+            "}";
     }
 }

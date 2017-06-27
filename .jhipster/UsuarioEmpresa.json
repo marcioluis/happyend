@@ -1,0 +1,45 @@
+{
+    "fluentMethods": true,
+    "relationships": [
+        {
+            "relationshipType": "many-to-one",
+            "relationshipName": "usuario",
+            "otherEntityName": "usuario",
+            "otherEntityField": "id"
+        },
+        {
+            "relationshipType": "many-to-one",
+            "relationshipName": "empresa",
+            "otherEntityName": "empresa",
+            "otherEntityField": "id"
+        }
+    ],
+    "fields": [
+        {
+            "fieldName": "tipoAcesso",
+            "fieldType": "TipoAcesso",
+            "fieldValues": "ADMIN,EDIT,OWNER"
+        },
+        {
+            "fieldName": "ativo",
+            "fieldType": "Boolean",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "dataAtivado",
+            "fieldType": "LocalDate"
+        },
+        {
+            "fieldName": "dataInativado",
+            "fieldType": "LocalDate"
+        }
+    ],
+    "changelogDate": "20170623185512",
+    "entityTableName": "usuario_empresa",
+    "dto": "no",
+    "pagination": "no",
+    "service": "no",
+    "skipClient": true
+}

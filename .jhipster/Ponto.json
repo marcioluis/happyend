@@ -1,0 +1,43 @@
+{
+    "fluentMethods": true,
+    "relationships": [
+        {
+            "relationshipType": "many-to-one",
+            "relationshipName": "usuario",
+            "otherEntityName": "usuario",
+            "otherEntityField": "id"
+        },
+        {
+            "relationshipType": "many-to-one",
+            "relationshipName": "evento",
+            "otherEntityName": "evento",
+            "otherEntityField": "id"
+        }
+    ],
+    "fields": [
+        {
+            "fieldName": "dataObtensao",
+            "fieldType": "LocalDate",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "dataExpiracao",
+            "fieldType": "LocalDate"
+        },
+        {
+            "fieldName": "quantidade",
+            "fieldType": "Integer",
+            "fieldValidateRules": [
+                "required"
+            ]
+        }
+    ],
+    "changelogDate": "20170623185509",
+    "entityTableName": "ponto",
+    "dto": "no",
+    "pagination": "no",
+    "service": "no",
+    "skipClient": true
+}

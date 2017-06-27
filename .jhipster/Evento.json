@@ -1,0 +1,51 @@
+{
+    "fluentMethods": true,
+    "relationships": [
+        {
+            "relationshipType": "one-to-many",
+            "relationshipName": "usuarios",
+            "otherEntityName": "usuarioEvento",
+            "otherEntityRelationshipName": "evento"
+        },
+        {
+            "relationshipType": "one-to-many",
+            "relationshipName": "pontos",
+            "otherEntityName": "ponto",
+            "otherEntityRelationshipName": "evento"
+        },
+        {
+            "relationshipType": "many-to-one",
+            "relationshipName": "empresa",
+            "otherEntityName": "empresa",
+            "otherEntityField": "id"
+        }
+    ],
+    "fields": [
+        {
+            "fieldName": "dataEvento",
+            "fieldType": "ZonedDateTime"
+        },
+        {
+            "fieldName": "finalizado",
+            "fieldType": "Boolean"
+        },
+        {
+            "fieldName": "onDemand",
+            "fieldType": "Boolean"
+        },
+        {
+            "fieldName": "horaInicioHappyOnDemand",
+            "fieldType": "ZonedDateTime"
+        },
+        {
+            "fieldName": "horaAgendadaFimHappyOnDemand",
+            "fieldType": "ZonedDateTime"
+        }
+    ],
+    "changelogDate": "20170623185507",
+    "entityTableName": "evento",
+    "dto": "no",
+    "pagination": "no",
+    "service": "no",
+    "skipClient": true
+}

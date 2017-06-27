@@ -1,22 +1,12 @@
 package br.com.happhour.domain;
 
-import java.io.Serializable;
-import java.util.Objects;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+
+import javax.persistence.*;
+import javax.validation.constraints.*;
+import java.io.Serializable;
+import java.util.Objects;
 
 import br.com.happhour.domain.enumeration.TipoImagem;
 
@@ -31,8 +21,7 @@ public class Imagem implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequenceGenerator")
-    @SequenceGenerator(name = "sequenceGenerator")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotNull
@@ -103,23 +92,23 @@ public class Imagem implements Serializable {
             return false;
         }
         Imagem imagem = (Imagem) o;
-        if (imagem.id == null || id == null) {
+        if (imagem.getId() == null || getId() == null) {
             return false;
         }
-        return Objects.equals(id, imagem.id);
+        return Objects.equals(getId(), imagem.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id);
+        return Objects.hashCode(getId());
     }
 
     @Override
     public String toString() {
         return "Imagem{" +
-            "id=" + id +
-            ", tipo='" + tipo + "'" +
-            ", url='" + url + "'" +
-            '}';
+            "id=" + getId() +
+            ", tipo='" + getTipo() + "'" +
+            ", url='" + getUrl() + "'" +
+            "}";
     }
 }
