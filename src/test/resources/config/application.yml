@@ -30,7 +30,7 @@ spring:
     jpa:
         database: H2
         open-in-view: false
-        show-sql: false
+        show-sql: true
         hibernate:
             ddl-auto: none
             naming:

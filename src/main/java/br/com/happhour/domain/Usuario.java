@@ -1,16 +1,28 @@
 package br.com.happhour.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.swagger.annotations.ApiModelProperty;
+import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
+
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import javax.persistence.*;
-import javax.validation.constraints.*;
-import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.Objects;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import io.swagger.annotations.ApiModelProperty;
 
 /**
  * A Usuario.
@@ -31,7 +43,7 @@ public class Usuario implements Serializable {
      * first login. Necessary to get the user id, 'subject', from google
      */
     @ApiModelProperty(value = "Token returned from the provider, problably expired in future uses after first login. Necessary to get the user id, 'subject', from google")
-    @Column(name = "provider_id_token")
+	@Transient
     private String providerIdToken;
 
     @NotNull
