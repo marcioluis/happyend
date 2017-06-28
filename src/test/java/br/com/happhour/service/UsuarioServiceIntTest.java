@@ -18,6 +18,8 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken.Payload;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 
 import br.com.happhour.HappyendApplication;
+import br.com.happhour.domain.Usuario;
+import br.com.happhour.domain.UsuarioSettings;
 import br.com.happhour.repository.UsuarioRepository;
 import br.com.happhour.service.dto.UsuarioDTO;
 import br.com.happhour.service.mapper.UsuarioMapper;
@@ -184,5 +186,36 @@ public class UsuarioServiceIntTest {
 		assertThat(usu.getTelephone()).isEqualTo("+55 69 993999778");
 		assertThat(usu.getProvider()).isEqualTo("google");
 		assertThat(usu.getProviderUserId()).isEqualTo("123456789");
+	}
+
+	@Test
+	public void atualizar_settings() {
+		// cria um usuario na base
+		Usuario usu = new Usuario();
+		usu.setEmail("marciotester@gmail.com");
+		usu.setDisplayName("Marcio Teste");
+		usu.setFamilyName("Teste");
+		usu.setGivenName("Marcio Teste");
+		usu.setTelephone("+55 69 993999777");
+		usu.setProvider("facebook");
+		usu.setProviderUserId("123456789");
+		usuarioRepository.save(usu);
+
+		Long usuarioID = usu.getId();
+
+		UsuarioSettings settings = new UsuarioSettings();
+		settings.setGeofances(true);
+		settings.setNotifications(false);
+		settings.setPromotions(true);
+		settings.setSearchRadius(500);
+
+		Usuario usuario = usuarioService.updateSettings(settings, usuarioID);
+
+		settings = usuario.getSettings();
+		assertThat(settings.getId()).isNotNull();
+		assertThat(settings.getSearchRadius()).isEqualTo(500);
+		assertThat(settings.isGeofances()).isTrue();
+		assertThat(settings.isNotifications()).isFalse();
+		assertThat(settings.isPromotions()).isTrue();
 	}
 }
