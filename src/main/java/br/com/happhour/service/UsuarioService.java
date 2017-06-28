@@ -184,7 +184,7 @@ public class UsuarioService {
 		usuarioRepository.delete(id);
 	}
 
-	public final GoogleIdTokenVerifier getVerifier() {
+	public GoogleIdTokenVerifier getVerifier() {
 		return verifier;
 	}
 
@@ -196,6 +196,8 @@ public class UsuarioService {
 		Usuario usuario = usuarioRepository.findOne(userId);
 
 		if (usuario != null) {
+			Long id = usuario.getSettings() == null ? null : usuario.getSettings().getId();
+			settings.setId(id);
 			settings.setUsuario(usuario);
 			usuario.setSettings(settings);
 			return usuarioRepository.save(usuario);

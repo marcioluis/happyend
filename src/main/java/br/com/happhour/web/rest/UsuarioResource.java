@@ -23,6 +23,8 @@ import br.com.happhour.domain.Usuario;
 import br.com.happhour.domain.UsuarioSettings;
 import br.com.happhour.service.UsuarioService;
 import br.com.happhour.service.dto.UsuarioDTO;
+import br.com.happhour.service.dto.UsuarioSettingsDTO;
+import br.com.happhour.service.mapper.UsuarioSettingsMapper;
 import br.com.happhour.web.rest.util.HeaderUtil;
 import br.com.happhour.web.rest.util.ResponseUtil;
 
@@ -79,15 +81,17 @@ public class UsuarioResource {
 	 * @throws URISyntaxException
 	 */
 	@PostMapping("/usuarios/{id}/settings")
-	public ResponseEntity<UsuarioSettings> updateSettings(@Valid @RequestBody UsuarioSettings settings,
+	public ResponseEntity<UsuarioSettingsDTO> updateSettings(@Valid @RequestBody UsuarioSettings settings,
 			@PathVariable("id") Long userId) throws URISyntaxException {
 		log.debug("REST request to update Usuario Settings: {}", settings);
 
 		Usuario usuario = usuarioService.updateSettings(settings, userId);
 		settings = usuario.getSettings();
 
+		UsuarioSettingsDTO dto = UsuarioSettingsMapper.INSTANCE.toDto(settings);
+
 		return ResponseEntity.ok().headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, userId.toString()))
-				.body(settings);
+				.body(dto);
 	}
 
 	/**

@@ -2,6 +2,7 @@ package br.com.happhour.service.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.factory.Mappers;
 
 import br.com.happhour.domain.Usuario;
 import br.com.happhour.service.dto.UsuarioDTO;
@@ -10,8 +11,10 @@ import br.com.happhour.service.dto.UsuarioDTO;
  * Mapper for the entity Usuario and its DTO UsuarioDTO.
  */
 @Mapper(componentModel = "spring", uses = {})
-public interface UsuarioMapper extends EntityMapper <UsuarioDTO, Usuario> {
+public interface UsuarioMapper extends EntityMapper<UsuarioDTO, Usuario> {
     
+	UsuarioMapper INSTANCE = Mappers.getMapper(UsuarioMapper.class);
+
 	@Override
     @Mapping(target = "empresas", ignore = true)
     @Mapping(target = "eventos", ignore = true)
