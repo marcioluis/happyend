@@ -194,8 +194,12 @@ public class UsuarioService {
 
 	public Usuario updateSettings(UsuarioSettings settings, Long userId) {
 		Usuario usuario = usuarioRepository.findOne(userId);
-		settings.setUsuario(usuario);
-		usuario.setSettings(settings);
-		return usuarioRepository.save(usuario);
+
+		if (usuario != null) {
+			settings.setUsuario(usuario);
+			usuario.setSettings(settings);
+			return usuarioRepository.save(usuario);
+		}
+		return new Usuario();
 	}
 }
