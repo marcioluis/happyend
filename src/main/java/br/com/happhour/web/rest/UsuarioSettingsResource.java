@@ -49,8 +49,7 @@ public class UsuarioSettingsResource {
      * @return the ResponseEntity with status 201 (Created) and with body the new usuarioSettings, or with status 400 (Bad Request) if the usuarioSettings has already an ID
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
-    @PostMapping("/usuario-settings")
-    
+	@PostMapping("/usuario-settings")
     public ResponseEntity<UsuarioSettings> createUsuarioSettings(@RequestBody UsuarioSettings usuarioSettings) throws URISyntaxException {
         log.debug("REST request to save UsuarioSettings : {}", usuarioSettings);
         if (usuarioSettings.getId() != null) {
@@ -71,8 +70,7 @@ public class UsuarioSettingsResource {
      * or with status 500 (Internal Server Error) if the usuarioSettings couldn't be updated
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
-    @PutMapping("/usuario-settings")
-    
+	@PutMapping("/usuario-settings")
     public ResponseEntity<UsuarioSettings> updateUsuarioSettings(@RequestBody UsuarioSettings usuarioSettings) throws URISyntaxException {
         log.debug("REST request to update UsuarioSettings : {}", usuarioSettings);
         if (usuarioSettings.getId() == null) {
@@ -90,8 +88,7 @@ public class UsuarioSettingsResource {
      * @param filter the filter of the request
      * @return the ResponseEntity with status 200 (OK) and the list of usuarioSettings in body
      */
-    @GetMapping("/usuario-settings")
-    
+	@GetMapping("/usuario-settings")
     public List<UsuarioSettings> getAllUsuarioSettings(@RequestParam(required = false) String filter) {
         if ("usuario-is-null".equals(filter)) {
             log.debug("REST request to get all UsuarioSettingss where usuario is null");
@@ -110,8 +107,7 @@ public class UsuarioSettingsResource {
      * @param id the id of the usuarioSettings to retrieve
      * @return the ResponseEntity with status 200 (OK) and with body the usuarioSettings, or with status 404 (Not Found)
      */
-    @GetMapping("/usuario-settings/{id}")
-    
+	@GetMapping("/usuario-settings/{id}")
     public ResponseEntity<UsuarioSettings> getUsuarioSettings(@PathVariable Long id) {
         log.debug("REST request to get UsuarioSettings : {}", id);
         UsuarioSettings usuarioSettings = usuarioSettingsRepository.findOne(id);
@@ -124,8 +120,7 @@ public class UsuarioSettingsResource {
      * @param id the id of the usuarioSettings to delete
      * @return the ResponseEntity with status 200 (OK)
      */
-    @DeleteMapping("/usuario-settings/{id}")
-    
+	@DeleteMapping("/usuario-settings/{id}")
     public ResponseEntity<Void> deleteUsuarioSettings(@PathVariable Long id) {
         log.debug("REST request to delete UsuarioSettings : {}", id);
         usuarioSettingsRepository.delete(id);

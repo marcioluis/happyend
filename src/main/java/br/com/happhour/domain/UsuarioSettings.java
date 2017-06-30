@@ -1,6 +1,5 @@
 package br.com.happhour.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -34,8 +33,8 @@ public class UsuarioSettings implements Serializable {
     @Column(name = "promotions")
     private Boolean promotions;
 
-    @OneToOne(mappedBy = "settings")
-    @JsonIgnore
+    @OneToOne
+    @JoinColumn(unique = true)
     private Usuario usuario;
 
     public Long getId() {

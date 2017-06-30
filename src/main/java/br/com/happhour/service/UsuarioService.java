@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,7 +19,10 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
 
 import br.com.happhour.domain.Usuario;
+import br.com.happhour.domain.UsuarioSettings;
 import br.com.happhour.repository.UsuarioRepository;
+import br.com.happhour.service.dto.UsuarioDTO;
+import br.com.happhour.service.mapper.UsuarioMapper;
 
 /**
  * Service Implementation for managing Usuario.
@@ -32,37 +34,32 @@ public class UsuarioService {
 	private final Logger log = LoggerFactory.getLogger(UsuarioService.class);
 
 	private final UsuarioRepository usuarioRepository;
+	private final UsuarioMapper usuarioMapper;
+
 	private GoogleIdTokenVerifier verifier;
 
-	@Autowired
-	public UsuarioService(UsuarioRepository usuarioRepository) {
+	public UsuarioService(UsuarioRepository usuarioRepository, UsuarioMapper usuarioMapper) {
 		this.usuarioRepository = usuarioRepository;
+		this.usuarioMapper = usuarioMapper;
 	}
-
-	// construtor para testes
-	public UsuarioService(UsuarioRepository usuarioRepository, GoogleIdTokenVerifier verifier) {
-		this.usuarioRepository = usuarioRepository;
-		this.verifier = verifier;
-	}
-
 
 	/**
 	 * Cria ou atualiza um usuario durante o processo de login pelo provider no
 	 * client
 	 * 
-	 * @param user
+	 * @param usuario
 	 * @return the new and saved user
 	 */
-	public Usuario createUsuarioFromProvider(Usuario user) {
-		switch (user.getProvider()) {
+	public UsuarioDTO createUsuarioFromProvider(UsuarioDTO usuario) {
+		switch (usuario.getProvider()) {
 		case "google":
-			validateAndMergeGoogleTokenInfo(user);
-			user = this.userAlreadyExistOnLogin(user);
-			return usuarioRepository.save(user);
+			this.validateAndMergeGoogleTokenInfo(usuario);
 		case "facebook":
 		default:
-			user = this.userAlreadyExistOnLogin(user);
-			return usuarioRepository.save(user);
+			this.userAlreadyExistOnLogin(usuario);
+			Usuario entity = usuarioMapper.toEntity(usuario);
+			entity = usuarioRepository.save(entity);
+			return usuarioMapper.toDto(entity);
 		}
 	}
 
@@ -73,7 +70,7 @@ public class UsuarioService {
 	 * @param user
 	 *            usuário com um provider id token do Google
 	 */
-	private void validateAndMergeGoogleTokenInfo(Usuario user) {
+	private void validateAndMergeGoogleTokenInfo(UsuarioDTO user) {
 
 		// TODO: Google Web Client num arquivo de properties
 		final String CLIENT_ID = "784220670042-ib1ssv1utfr1c4cvfs67t7n9tgkck2vk.apps.googleusercontent.com";
@@ -121,31 +118,22 @@ public class UsuarioService {
 
 	/**
 	 * Procura o usuario no database, se encontrar retorna ele para update ou
-	 * user
+	 * user para criação
 	 * 
 	 * @param user
 	 *            usuário para pesquisa vindo direto do Auth Provider (google,
 	 *            facebook)
 	 * @return usuario do database ou user se não encontrar
 	 */
-	private Usuario userAlreadyExistOnLogin(Usuario user) {
+	private void userAlreadyExistOnLogin(UsuarioDTO user) {
 		Usuario usuario = usuarioRepository.findByProviderUserIdAndProvider(user.getProviderUserId(),
 				user.getProvider());
 
 		if (usuario != null) {
-			// mantem algumas informacoes do client pois em teoria são mais
+			// mantem as informacoes do client pois em teoria são mais
 			// atualizadas já que vem direto do provider ou informadas pelo
-			// usuario
-			usuario.setProviderIdToken(user.getProviderIdToken());
-			usuario.setDisplayName(user.getDisplayName());
-			usuario.setFamilyName(user.getFamilyName());
-			usuario.setGivenName(user.getGivenName());
-			usuario.setImageUrl(user.getImageUrl());
-			usuario.setEmail(user.getEmail());
-			usuario.setTelephone(user.getTelephone());
-			return usuario;
-		} else {
-			return user;
+			// usuario e só adiciona o ID da entity para update e não criação
+			user.setId(usuario.getId());
 		}
 	}
 
@@ -194,5 +182,26 @@ public class UsuarioService {
 	public void delete(Long id) {
 		log.debug("Request to delete Usuario : {}", id);
 		usuarioRepository.delete(id);
+	}
+
+	public GoogleIdTokenVerifier getVerifier() {
+		return verifier;
+	}
+
+	public void setVerifier(GoogleIdTokenVerifier verifier) {
+		this.verifier = verifier;
+	}
+
+	public Usuario updateSettings(UsuarioSettings settings, Long userId) {
+		Usuario usuario = usuarioRepository.findOne(userId);
+
+		if (usuario != null) {
+			Long id = usuario.getSettings() == null ? null : usuario.getSettings().getId();
+			settings.setId(id);
+			settings.setUsuario(usuario);
+			usuario.setSettings(settings);
+			return usuarioRepository.save(usuario);
+		}
+		return new Usuario();
 	}
 }

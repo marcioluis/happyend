@@ -25,11 +25,13 @@
     "enableTranslation": false,
     "applicationType": "microservice",
     "testFrameworks": [],
-    "jhiPrefix": "jhi",    
+    "jhiPrefix": "jhi",
     "skipClient": true,
     "skipUserManagement": true,
     "nativeLanguage": "pt-br",
-    "languages": ["pt-br"],
+    "languages": [
+      "pt-br"
+    ],
     "clientPackageManager": "yarn"
   }
 }

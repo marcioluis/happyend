@@ -5,7 +5,7 @@
             "relationshipType": "one-to-one",
             "relationshipName": "usuario",
             "otherEntityName": "usuario",
-            "ownerSide": false,
+            "ownerSide": true,
             "otherEntityRelationshipName": "settings"
         }
     ],
